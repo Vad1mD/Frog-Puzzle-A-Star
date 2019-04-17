@@ -9,6 +9,11 @@ public class Ex3 {
         Scanner sc = new Scanner(System.in);
         String initial_state = sc.nextLine();
 
+        AStarSearch(initial_state);
+    }
+
+
+    public static void AStarSearch(String initial_state){
         // Initializing tree root and the pq
         Node root = new Node(initial_state,hue_calc(initial_state.toCharArray()));
         PriorityQueue <Node> list = new PriorityQueue<>();
@@ -24,7 +29,6 @@ public class Ex3 {
         while(!list.isEmpty() && found_path!=true){
             if(list.peek().hueristic == 0) {
                 found_path = true;
-                System.out.println("path found");
             }
             else{
                 FindAll(list);
@@ -36,6 +40,7 @@ public class Ex3 {
         }
         path_reconstruction(list.poll());
     }
+
 
     // Node expansion function
     public static void FindAll(PriorityQueue<Node> list)
