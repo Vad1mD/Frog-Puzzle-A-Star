@@ -1,5 +1,6 @@
+// Vadim Dolguintsev 319479531 Omer Sirpad 304803018
 
-class Node implements Comparable<Node> {
+class Node {
     char [] state;
     int hueristic;
     int total_cost;
@@ -9,8 +10,8 @@ class Node implements Comparable<Node> {
 
     Node(String state,int hueristic){
         this.state = state.toCharArray();
-        total_cost = 0;
-        individual_cost=0;
+        this.total_cost = 0;
+        this.individual_cost=0;
         this.hueristic = hueristic;
     }
 
@@ -25,16 +26,6 @@ class Node implements Comparable<Node> {
     // for printing purposes
     void set_statement(char c, int i,int j){
         this.switch_statement = "Switching "+ c +" in index " + i + " and blank in index "+ j;
-    }
-
-    // comparator overload to compare the objects in the pq by the function value
-    public int compareTo(Node node){
-        if(this.total_cost + this.hueristic < node.hueristic + node.total_cost)
-            return 1;
-        else if(this.total_cost + this.hueristic > node.hueristic + node.total_cost)
-            return -1;
-        else
-            return 0;
     }
 
     // toString to print the object

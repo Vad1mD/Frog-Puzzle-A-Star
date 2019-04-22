@@ -1,3 +1,4 @@
+// Vadim Dolguintsev 319479531 Omer Sirpad 304803018
 
 import java.util.*;
 
@@ -16,7 +17,22 @@ public class Ex3 {
     public static void AStarSearch(String initial_state){
         // Initializing tree root and the pq
         Node root = new Node(initial_state,hue_calc(initial_state.toCharArray()));
-        PriorityQueue <Node> list = new PriorityQueue<>();
+
+        PriorityQueue<Node> list = new PriorityQueue<Node>(20, new Comparator<Node>() {
+            // override compare method
+            public int compare(Node n1, Node n2) {
+                if (n1.total_cost + n1.hueristic > n2.total_cost + n2.hueristic) {
+                    return 1;
+                }
+                else if (n1.total_cost + n1.hueristic < n2.total_cost + n2.hueristic) {
+                    return -1;
+                }
+                else {
+                    return 0;
+                }
+            }
+        });
+
         list.add(root);
 
         // The goal state is when all the W's are on the left of the B's
@@ -63,12 +79,22 @@ public class Ex3 {
                 }
 
             if (i < 5)
-                if (current.state[i] == 'B' && current.state[i + 1] == 'W' && current.state[i + 2] == '0') {
+                if (current.state[i] == 'B' && current.state[i + 2] == '0') {
 
                     temp = swap(current.state.clone(), i, i + 2);
 
-                    Node node = new Node(temp, current.total_cost + 2,2, hue_calc(temp),current);
+                    Node node = new Node(temp, current.total_cost + 1,1, hue_calc(temp),current);
                     node.set_statement('B',i,i+2);
+
+                    list.add(node);
+                }
+            if(i < 4)
+                if (current.state[i] == 'B' && current.state[i + 3] == '0'){
+
+                    temp = swap(current.state.clone(), i, i + 3);
+
+                    Node node = new Node(temp, current.total_cost + 2,2, hue_calc(temp),current);
+                    node.set_statement('B',i,i+3);
 
                     list.add(node);
                 }
@@ -84,14 +110,25 @@ public class Ex3 {
                 }
 
             if (i > 1)
-                if (current.state[i] == 'W' && current.state[i - 1] == 'B' && current.state[i - 2] == '0') {
+                if (current.state[i] == 'W' && current.state[i - 2] == '0'){
                     temp = swap(current.state.clone(), i, i - 2);
 
-                    Node node = new Node(temp, current.total_cost + 2,2, hue_calc(temp), current);
+                    Node node = new Node(temp, current.total_cost + 1,1, hue_calc(temp), current);
                     node.set_statement('W',i,i-2);
 
                     list.add(node);
                 }
+
+            if (i > 2){
+                if (current.state[i] == 'W' && current.state[i - 3] == '0'){
+                    temp = swap(current.state.clone(), i, i - 3);
+
+                    Node node = new Node(temp, current.total_cost + 2,2, hue_calc(temp), current);
+                    node.set_statement('W',i,i-3);
+
+                    list.add(node);
+                }
+            }
 
         }
 
