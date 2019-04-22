@@ -1,4 +1,3 @@
-// Vadim Dolguintsev 319479531 Omer Sirpad 304803018
 
 import java.util.*;
 
