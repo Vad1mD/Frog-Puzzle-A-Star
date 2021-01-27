@@ -1,3 +1,7 @@
+/*
+*
+* Author : Vadim Dolguintsev
+*/
 
 import java.util.*;
 
@@ -5,60 +9,45 @@ public class Ex3 {
 
     public static void main(String []args){
 
-        // Receiving valid possible input from user
+        System.out.println("Please enter initial state of the puzzle where plack pieces are on the left and white on the right");
         Scanner sc = new Scanner(System.in);
-        String initial_state = sc.nextLine();
+        String initialState = sc.nextLine();
 
-        AStarSearch(initial_state);
+        AStarSearch(initialState);
     }
 
 
-    public static void AStarSearch(String initial_state){
-        // Initializing tree root and the pq
-        Node root = new Node(initial_state,hue_calc(initial_state.toCharArray()));
+    public static void AStarSearch(String initialState){
 
-        PriorityQueue<Node> list = new PriorityQueue<Node>(20, new Comparator<Node>() {
-            // override compare method
-            public int compare(Node n1, Node n2) {
-                if (n1.total_cost + n1.hueristic > n2.total_cost + n2.hueristic) {
-                    return 1;
-                }
-                else if (n1.total_cost + n1.hueristic < n2.total_cost + n2.hueristic) {
-                    return -1;
-                }
-                else {
-                    return 0;
-                }
-            }
-        });
+        Node root = new Node(initialState, hueCalc(initialState.toCharArray()));
+
+        // override compare method
+        PriorityQueue<Node> list = Node.getPriorityQueue();
 
         list.add(root);
 
-        // The goal state is when all the W's are on the left of the B's
-        // Examples: WWW0BBB, WW0WBBB, WWWB0BB etc.
-        // The given heuristic is the number of W's that yet passed to the left of all B's
-        boolean found_path = false;
+        boolean foundPath = false;
 
-        // As long as the goal condition, poll the best option node from the pq and expand it
+        // As long as the goal condition isn't met, poll the best option node from the pq and expand it
         // Stop when a path for solution is found
-        while(!list.isEmpty() && found_path!=true){
-            if(list.peek().hueristic == 0) {
-                found_path = true;
+        while(!list.isEmpty() && !foundPath){
+            if(list.peek().getHeuristic() == 0) {
+                foundPath = true;
             }
             else{
-                FindAll(list);
+                findAll(list);
             }
         }
         if(list.isEmpty()) {
             System.out.println("No solution");
             System.exit(0);
         }
-        path_reconstruction(list.poll());
+        pathReconstruction(list.poll());
     }
 
 
     // Node expansion function
-    public static void FindAll(PriorityQueue<Node> list)
+    public static void findAll(PriorityQueue<Node> list)
     {
         Node current = list.poll();
 
@@ -67,63 +56,63 @@ public class Ex3 {
         for (int i = 0; i < 7; i++)
         {
             if (i < 6)
-                if (current.state[i] == 'B' && current.state[i + 1] == '0') {
+                if (current.getState()[i] == 'B' && current.getState()[i + 1] == '0') {
 
-                    temp = swap(current.state.clone(), i, i + 1);
+                    temp = swap(current.getState().clone(), i, i + 1);
 
-                    Node node = new Node(temp, current.total_cost + 1,1, hue_calc(temp),current);
-                    node.set_statement('B',i,i+1);
+                    Node node = new Node(temp, current.getTotalCost() + 1,1, hueCalc(temp),current);
+                    node.setStatement('B',i,i+1);
 
                     list.add(node);
                 }
 
             if (i < 5)
-                if (current.state[i] == 'B' && current.state[i + 2] == '0') {
+                if (current.getState()[i] == 'B' && current.getState()[i + 2] == '0') {
 
-                    temp = swap(current.state.clone(), i, i + 2);
+                    temp = swap(current.getState().clone(), i, i + 2);
 
-                    Node node = new Node(temp, current.total_cost + 1,1, hue_calc(temp),current);
-                    node.set_statement('B',i,i+2);
+                    Node node = new Node(temp, current.getTotalCost() + 1,1, hueCalc(temp),current);
+                    node.setStatement('B',i,i+2);
 
                     list.add(node);
                 }
             if(i < 4)
-                if (current.state[i] == 'B' && current.state[i + 3] == '0'){
+                if (current.getState()[i] == 'B' && current.getState()[i + 3] == '0'){
 
-                    temp = swap(current.state.clone(), i, i + 3);
+                    temp = swap(current.getState().clone(), i, i + 3);
 
-                    Node node = new Node(temp, current.total_cost + 2,2, hue_calc(temp),current);
-                    node.set_statement('B',i,i+3);
+                    Node node = new Node(temp, current.getTotalCost() + 2,2, hueCalc(temp),current);
+                    node.setStatement('B',i,i+3);
 
                     list.add(node);
                 }
 
             if (i > 0)
-                if (current.state[i] == 'W' && current.state[i - 1] == '0') {
+                if (current.getState()[i] == 'W' && current.getState()[i - 1] == '0') {
 
-                    temp = swap(current.state.clone(), i, i - 1);
-                    Node node = new Node(temp, current.total_cost + 1,1, hue_calc(temp),current);
-                    node.set_statement('W',i,i-1);
+                    temp = swap(current.getState().clone(), i, i - 1);
+                    Node node = new Node(temp, current.getTotalCost() + 1,1, hueCalc(temp),current);
+                    node.setStatement('W',i,i-1);
 
                     list.add(node);
                 }
 
             if (i > 1)
-                if (current.state[i] == 'W' && current.state[i - 2] == '0'){
-                    temp = swap(current.state.clone(), i, i - 2);
+                if (current.getState()[i] == 'W' && current.getState()[i - 2] == '0'){
+                    temp = swap(current.getState().clone(), i, i - 2);
 
-                    Node node = new Node(temp, current.total_cost + 1,1, hue_calc(temp), current);
-                    node.set_statement('W',i,i-2);
+                    Node node = new Node(temp, current.getTotalCost() + 1,1, hueCalc(temp), current);
+                    node.setStatement('W',i,i-2);
 
                     list.add(node);
                 }
 
             if (i > 2){
-                if (current.state[i] == 'W' && current.state[i - 3] == '0'){
-                    temp = swap(current.state.clone(), i, i - 3);
+                if (current.getState()[i] == 'W' && current.getState()[i - 3] == '0'){
+                    temp = swap(current.getState().clone(), i, i - 3);
 
-                    Node node = new Node(temp, current.total_cost + 2,2, hue_calc(temp), current);
-                    node.set_statement('W',i,i-3);
+                    Node node = new Node(temp, current.getTotalCost() + 2,2, hueCalc(temp), current);
+                    node.setStatement('W',i,i-3);
 
                     list.add(node);
                 }
@@ -133,7 +122,6 @@ public class Ex3 {
 
     }
 
-    // char swapping function
     public static char [] swap (char [] temp_state, int i, int j){
         char temp = temp_state[i];
         temp_state[i] = temp_state[j];
@@ -141,8 +129,7 @@ public class Ex3 {
         return temp_state;
     }
 
-    // calculating heuristic
-    public static int hue_calc(char [] current){
+    public static int hueCalc(char [] current){
         int h = 3;
         int i = 0;
         while(i<7 && current[i]!='B'){
@@ -153,17 +140,17 @@ public class Ex3 {
         return h;
     }
 
-    public static void path_reconstruction(Node node){
-        Vector<Node> path = new Vector<>();
+    public static void pathReconstruction(Node node){
+        List<Node> path = new ArrayList<>();
         while(node!=null){
             path.add(node);
-            node = node.parent;
+            node = node.getParent();
         }
 
         for(int i = path.size()-1;i>=0;i--){
-            System.out.println(path.elementAt(i).toString());
+            System.out.println(path.get(i).toString());
         }
-        System.out.printf("Solution found, lowest possible cost: %d",path.elementAt(0).total_cost);
+        System.out.printf("Solution found, lowest possible cost: %d",path.get(0).getTotalCost());
     }
 }
 

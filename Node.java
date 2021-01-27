@@ -1,39 +1,70 @@
+import java.util.PriorityQueue;
 
 class Node {
-    char [] state;
-    int hueristic;
-    int total_cost;
-    int individual_cost;
-    Node parent = null;
-    String switch_statement;
 
-    Node(String state,int hueristic){
-        this.state = state.toCharArray();
-        this.total_cost = 0;
-        this.individual_cost=0;
-        this.hueristic = hueristic;
+    private char [] state;
+    private int heuristic;
+    private int totalCost;
+    private int individualCost;
+    private Node parent = null;
+    private String switchStatement;
+
+    public char[] getState() {
+        return state;
     }
 
-    Node(char [] state, int cost, int in_cost, int hue, Node parent){
+    public int getHeuristic() {
+        return heuristic;
+    }
+
+    public int getTotalCost() {
+        return totalCost;
+    }
+
+    public Node getParent() {
+        return parent;
+    }
+
+    Node(String state,int heuristic){
+        this.state = state.toCharArray();
+        this.totalCost = 0;
+        this.individualCost =0;
+        this.heuristic = heuristic;
+    }
+
+    Node(char [] state, int cost, int inCost, int hue, Node parent){
         this.state = state;
-        this.total_cost = cost;
-        this.hueristic = hue;
+        this.totalCost = cost;
+        this.heuristic = hue;
         this.parent = parent;
-        this.individual_cost = in_cost;
+        this.individualCost = inCost;
     }
 
     // for printing purposes
-    void set_statement(char c, int i,int j){
-        this.switch_statement = "Switching "+ c +" in index " + i + " and blank in index "+ j;
+    public void setStatement(char c, int i, int j){
+        this.switchStatement = "Switching "+ c +" in index " + i + " and blank in index "+ j;
     }
 
-    // toString to print the object
     public String toString(){
         String s = String.valueOf(this.state);
         return  s +
-                "\n" +this.switch_statement +
-                "\n" +"Cost of this action:" + individual_cost +
-                "\nTotal cost so far: "+total_cost+"\n";
+                "\n" +this.switchStatement +
+                "\n" +"Cost of this action:" + individualCost +
+                "\nTotal cost so far: "+ totalCost +"\n";
+    }
+
+    public static PriorityQueue<Node> getPriorityQueue(){
+        return new PriorityQueue<>(20, (n1, n2) -> {
+            if (n1.getTotalCost() + n1.getHeuristic() > n2.getTotalCost() + n2.getHeuristic()) {
+                return 1;
+            }
+            else if (n1.getTotalCost() + n1.getHeuristic() < n2.getTotalCost() + n2.getHeuristic()) {
+                return -1;
+            }
+            else {
+                return 0;
+            }
+        });
     }
 
 }
